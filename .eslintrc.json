@@ -17,6 +17,7 @@
   "rules": {
     "class-methods-use-this": "off",
     "no-useless-constructor": "off",
+    "import/no-named-as-default": "off",
     "no-empty-function": "off",
     "no-unused-vars": "off",
     "indent": "off",

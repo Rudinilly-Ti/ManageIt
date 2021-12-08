@@ -17,13 +17,19 @@ export default class UserRepository implements IUserRepository {
     return user;
   }
 
+  public async findById(id: string): Promise<User | null> {
+    const user = await this.ormRepository.findOne({ id });
+
+    return user || null;
+  }
+
   public async findByLogin(login: string): Promise<User | null> {
     const user = await this.ormRepository.findOne({ where: { login } });
 
     return user || null;
   }
 
-  public async update(data: IUserDto): Promise<User | null> {
+  public async update(data: User): Promise<User | null> {
     const user = await this.ormRepository.save(data);
 
     return user || null;

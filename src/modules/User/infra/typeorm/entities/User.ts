@@ -14,7 +14,7 @@ export default class User {
   login: string;
 
   @Column()
-  password?: string;
+  password: string;
 
   @CreateDateColumn()
   created_at: Date;
