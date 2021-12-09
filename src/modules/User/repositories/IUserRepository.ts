@@ -7,6 +7,6 @@ export default interface IUserRepository {
   create(data: IUserDto): Promise<User>
   findById(id: string): Promise<User | null>
   findByLogin(login: string): Promise<User | null>
-  update(data: User): Promise<User | null>
+  update(data: User): Promise<User>
   delete(id: string): Promise<DeleteResult>
 }

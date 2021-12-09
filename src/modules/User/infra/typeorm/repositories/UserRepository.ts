@@ -24,18 +24,18 @@ export default class UserRepository implements IUserRepository {
   }
 
   public async findByLogin(login: string): Promise<User | null> {
-    const user = await this.ormRepository.findOne({ where: { login } });
+    const user = await this.ormRepository.findOne({ login });
 
     return user || null;
   }
 
-  public async update(data: User): Promise<User | null> {
+  public async update(data: User): Promise<User> {
     const user = await this.ormRepository.save(data);
 
     return user || null;
   }
 
   public async delete(id: string): Promise<DeleteResult> {
-    return this.ormRepository.delete(id)
+    return this.ormRepository.delete({ id })
   }
 }
