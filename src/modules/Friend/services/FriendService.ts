@@ -12,6 +12,12 @@ interface IRequest {
   phone: string
 }
 
+interface IListFriends {
+  user_id: string
+  option: string
+  optionValue: string
+}
+
 @injectable()
 export default class FriendService {
   constructor(
@@ -22,15 +28,13 @@ export default class FriendService {
   public async create({
     user_id, name, adress, phone,
   }: IFriendDTO): Promise<Friend> {
-    const checkName = await this.friendRepository.findByName(name);
-    if (checkName) {
-      throw new Error('Name already used.');
-    }
+    const myfriends = await this.friendRepository.findByUserId(user_id);
 
-    const checkPhone = await this.friendRepository.findByPhone(phone);
-    if (checkPhone) {
-      throw new Error('Phone already used.');
-    }
+    myfriends.forEach((friend) => {
+      if (friend.name === name && friend.adress === adress && friend.phone === phone) {
+        throw new Error('Friend already registred.');
+      }
+    })
 
     const friend = await this.friendRepository.create({
       user_id, name, adress, phone,
@@ -39,14 +43,32 @@ export default class FriendService {
     return friend;
   }
 
-  public async listFriends(user_id: string): Promise<Friend[]> {
-    const friends = await this.friendRepository.findByUserId(user_id);
-
-    if (!friends) {
-      throw new Error('User does not have any friend.')
+  public async listFriends({
+    user_id, option, optionValue,
+  }: IListFriends): Promise<Friend[] | Friend> {
+    let friends;
+    let friend;
+    if (!option) {
+      friends = await this.friendRepository.findByUserId(user_id);
     }
 
-    return friends;
+    if (option === 'name') {
+      friends = await this.friendRepository.findByName(user_id, optionValue);
+    }
+
+    if (option === 'adress') {
+      friends = await this.friendRepository.findByAdress(user_id, optionValue);
+    }
+
+    if (option === 'phone') {
+      friend = await this.friendRepository.findByPhone(user_id, optionValue);
+    }
+
+    if (!friends && !friend) {
+      throw new Error('Friends not found.')
+    }
+
+    return friends || friend;
   }
 
   public async updateFriend({

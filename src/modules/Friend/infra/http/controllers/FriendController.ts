@@ -22,7 +22,8 @@ export default class FriendController {
     const friendService = container.resolve(FriendService);
 
     const user_id = request.user.id;
-    const friends = await friendService.listFriends(user_id);
+    const { option, optionValue } = request.body;
+    const friends = await friendService.listFriends({ user_id, option, optionValue });
 
     return response.json(friends);
   }
