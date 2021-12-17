@@ -4,11 +4,16 @@ import { Request, Response } from 'express';
 import UserService from '../../../services/UserService';
 
 export default class UserController {
+  private userService: UserService
+
+  constructor() {
+    this.userService = container.resolve(UserService)
+  }
+
   public async authentication(request: Request, response: Response): Promise<Response> {
-    const userService = container.resolve(UserService);
     const { login, password } = request.body;
 
-    const { user, token } = await userService.authenticate({ login, password });
+    const { user, token } = await this.userService.authenticate({ login, password });
 
     delete user.password;
 
@@ -16,10 +21,9 @@ export default class UserController {
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
-    const userService = container.resolve(UserService);
     const { name, login, password } = request.body;
 
-    const user = await userService.createUser({
+    const user = await this.userService.createUser({
       name, login, password,
     });
 
@@ -29,12 +33,11 @@ export default class UserController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const userService = container.resolve(UserService);
     const { id } = request.user;
 
     const { name, login, password } = request.body;
 
-    const user = await userService.updateUser({
+    const user = await this.userService.updateUser({
       id, name, login, password,
     });
 
