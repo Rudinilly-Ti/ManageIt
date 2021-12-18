@@ -44,7 +44,7 @@ export default class AccountService {
   }
 
   public async listAccounts({ user_id, option, optionValue }: IListAccounts): Promise<Account[]> {
-    let accounts;
+    let accounts: Account[];
     if (!option) {
       accounts = await this.accountRepository.findByUserId(user_id);
     }
@@ -57,8 +57,8 @@ export default class AccountService {
       accounts = await this.accountRepository.findByLogin(user_id, optionValue);
     }
 
-    if (!accounts) {
-      throw new Error('User does not have any account registred.')
+    if (accounts.length === 0) {
+      throw new Error("Can't find any account.");
     }
 
     return accounts;
@@ -88,6 +88,10 @@ export default class AccountService {
 
   public async deleteAccount(id: string, user_id: string): Promise<DeleteResult> {
     const account = await this.accountRepository.findById(id);
+
+    if (!account) {
+      throw new Error('Account not found.');
+    }
 
     if (account.user_id !== user_id) {
       throw new Error('You are not allowed to delete.');
