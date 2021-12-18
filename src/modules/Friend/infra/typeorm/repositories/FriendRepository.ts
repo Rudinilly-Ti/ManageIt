@@ -30,22 +30,22 @@ export default class FriendRepository implements IFriendRepository {
     return friends || null;
   }
 
-  public async findByName(user_id: string, name: string): Promise<Friend | null> {
-    const friend = await this.ormRepository.findOne({ user_id, name });
+  public async findByName(user_id: string, name: string): Promise<Friend[] | null> {
+    const friend = await this.ormRepository.find({ user_id, name });
 
     return friend || null;
   }
 
-  public async findByAdress(user_id: string, adress: string): Promise<Friend[] | null> {
-    const friends = await this.ormRepository.find({ user_id, adress });
+  public async findByAddress(user_id: string, address: string): Promise<Friend[] | null> {
+    const friends = await this.ormRepository.find({ user_id, address });
 
     return friends || null;
   }
 
-  public async findByPhone(user_id: string, phone: string): Promise<Friend | null> {
-    const friend = await this.ormRepository.findOne({ user_id, phone });
+  public async findByPhone(user_id: string, phone: string): Promise<Friend[] | null> {
+    const friends = await this.ormRepository.find({ user_id, phone });
 
-    return friend || null;
+    return friends || null;
   }
 
   public async update(data: Friend): Promise<Friend> {

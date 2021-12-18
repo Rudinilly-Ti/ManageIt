@@ -4,53 +4,54 @@ import { container } from 'tsyringe';
 import FriendService from '../../../services/FriendService';
 
 export default class FriendController {
-  private friendService: FriendService
-
-  constructor() {
-    this.friendService = container.resolve(FriendService);
-  }
-
   public async createFriend(request: Request, response: Response): Promise<Response> {
+    const friendService = container.resolve(FriendService);
     const user_id = request.user.id;
-    const { name, adress, phone } = request.body;
+    const { name, address, phone } = request.body;
 
-    const friend = await this.friendService.create({
-      user_id, name, adress, phone,
+    const friend = await friendService.create({
+      user_id, name, address, phone,
     });
 
     return response.json(friend);
   }
 
   public async listFriends(request: Request, response: Response): Promise<Response> {
+    const friendService = container.resolve(FriendService);
+
     const user_id = request.user.id;
 
     const { option, optionValue } = request.body;
 
-    const friends = await this.friendService.listFriends({ user_id, option, optionValue });
+    const friends = await friendService.listFriends({ user_id, option, optionValue });
 
     return response.json(friends);
   }
 
   public async updateFriend(request: Request, response: Response): Promise<Response> {
+    const friendService = container.resolve(FriendService);
+
     const user_id = request.user.id;
 
     const {
-      id, name, adress, phone,
+      id, name, address, phone,
     } = request.body;
 
-    const friend = await this.friendService.updateFriend({
-      id, user_id, name, adress, phone,
+    const friend = await friendService.updateFriend({
+      id, user_id, name, address, phone,
     });
 
     return response.json(friend);
   }
 
   public async deleteFriend(request: Request, response: Response): Promise<Response> {
+    const friendService = container.resolve(FriendService);
+
     const user_id = request.user.id;
 
     const { id } = request.body;
 
-    const friend = await this.friendService.deleteFriend(id, user_id);
+    const friend = await friendService.deleteFriend(id, user_id);
 
     return response.json(friend);
   }

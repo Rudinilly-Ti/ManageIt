@@ -26,7 +26,7 @@ export default class CreateFriends1639072198794 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'adress',
+            name: 'address',
             type: 'varchar',
           },
           {
@@ -61,7 +61,7 @@ export default class CreateFriends1639072198794 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropForeignKey('friends', 'UserFriends');
+    await queryRunner.dropForeignKey('friends', 'UserFriend');
     await queryRunner.dropTable('friends');
   }
 }

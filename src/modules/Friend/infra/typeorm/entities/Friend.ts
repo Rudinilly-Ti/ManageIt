@@ -25,7 +25,7 @@ export default class Friend {
   name: string;
 
   @Column()
-  adress: string;
+  address: string;
 
   @Column()
   phone: string;
