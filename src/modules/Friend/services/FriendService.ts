@@ -7,15 +7,15 @@ import IFriendRepository from '../repositories/IFriendRepository';
 interface IRequest {
   id: string
   user_id: string
-  name: string
-  address: string
-  phone: string
+  name?: string
+  address?: string
+  phone?: string
 }
 
 interface IListFriends {
   user_id: string
-  option: string
-  optionValue: string
+  option?: string
+  optionValue?: string
 }
 
 @injectable()
@@ -34,6 +34,10 @@ export default class FriendService {
       if (friend.name === name && friend.address === address && friend.phone === phone) {
         throw new Error('Friend already registred.');
       }
+
+      if (friend.phone === phone) {
+        throw new Error('Phone already registred.');
+      }
     })
 
     const friend = await this.friendRepository.create({
@@ -45,7 +49,7 @@ export default class FriendService {
 
   public async listFriends({
     user_id, option, optionValue,
-  }: IListFriends): Promise<Friend[] | Friend> {
+  }: IListFriends): Promise<Friend[]> {
     let friends: Friend[];
     if (!option) {
       friends = await this.friendRepository.findByUserId(user_id);
@@ -73,6 +77,18 @@ export default class FriendService {
   public async updateFriend({
     id, user_id, name, address, phone,
   }: IRequest): Promise<Friend> {
+    const myfriends = await this.friendRepository.findByUserId(user_id);
+
+    myfriends.forEach((fri) => {
+      if (fri.name === name && fri.address === address && fri.phone === phone) {
+        throw new Error('You already have a friend with this informations.');
+      }
+
+      if (fri.phone === phone) {
+        throw new Error('Phone already registred.');
+      }
+    })
+
     const friend = await this.friendRepository.findById(id);
 
     if (!friend) {
@@ -83,9 +99,9 @@ export default class FriendService {
       throw new Error('You are not allowed to update.');
     }
 
-    if (friend.name !== name && name) { friend.name = name }
-    if (friend.address !== address && address) { friend.address = address }
-    if (friend.phone !== phone && phone) { friend.phone = phone }
+    if (name && friend.name !== name) { friend.name = name }
+    if (address && friend.address !== address) { friend.address = address }
+    if (phone && friend.phone !== phone) { friend.phone = phone }
 
     await this.friendRepository.update(friend);
 

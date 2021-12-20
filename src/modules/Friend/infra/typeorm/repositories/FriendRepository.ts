@@ -1,4 +1,6 @@
-import { getRepository, Repository, DeleteResult } from 'typeorm';
+import {
+  getRepository, Repository, DeleteResult, Like,
+} from 'typeorm';
 import IFriendDTO from '../../../dtos/IFriendDTO';
 import IFriendRepository from '../../../repositories/IFriendRepository';
 import Friend from '../entities/Friend';
@@ -31,19 +33,19 @@ export default class FriendRepository implements IFriendRepository {
   }
 
   public async findByName(user_id: string, name: string): Promise<Friend[] | null> {
-    const friend = await this.ormRepository.find({ user_id, name });
+    const friend = await this.ormRepository.find({ user_id, name: Like(`%${name}%`) });
 
     return friend || null;
   }
 
   public async findByAddress(user_id: string, address: string): Promise<Friend[] | null> {
-    const friends = await this.ormRepository.find({ user_id, address });
+    const friends = await this.ormRepository.find({ user_id, address: Like(`%${address}%`) });
 
     return friends || null;
   }
 
   public async findByPhone(user_id: string, phone: string): Promise<Friend[] | null> {
-    const friends = await this.ormRepository.find({ user_id, phone });
+    const friends = await this.ormRepository.find({ user_id, phone: Like(`%${phone}%`) });
 
     return friends || null;
   }

@@ -18,9 +18,9 @@ interface IResponse {
 
 interface IRequestUpdate {
   id: string,
-  name: string,
-  login: string;
-  password: string;
+  name?: string,
+  login?: string;
+  password?: string;
 }
 
 @injectable()
@@ -70,13 +70,16 @@ export default class UserService {
   public async updateUser({
     id, name, login, password,
   }: IRequestUpdate): Promise<User> {
+    const checkUserExists = await this.userRepository.findByLogin(login);
+    if (checkUserExists) { throw new Error('This login is unavailable') }
+
     const user = await this.userRepository.findById(id);
     if (!user) {
       throw new Error('Only authenticated users can update.');
     }
 
-    if (user.name !== name && name) { user.name = name; }
-    if (user.login !== login && login) { user.login = login; }
+    if (name && user.name !== name) { user.name = name; }
+    if (login && user.login !== login) { user.login = login; }
     if (password) {
       const passwordMatched = await compare(password, user.password)
       if (!passwordMatched) {

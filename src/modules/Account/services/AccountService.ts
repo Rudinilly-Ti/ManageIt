@@ -7,9 +7,9 @@ import Account from '../infra/typeorm/entities/Account';
 interface IResquest {
   id: string
   user_id: string
-  name: string
-  login: string
-  password: string
+  name?: string
+  login?: string
+  password?: string
 }
 
 interface IListAccounts {
@@ -67,6 +67,14 @@ export default class AccountService {
   public async updateAccount({
     id, user_id, name, login, password,
   }: IResquest): Promise<Account> {
+    const myAccounts = await this.accountRepository.findByUserId(user_id);
+
+    myAccounts.forEach((acc) => {
+      if (acc.name === name && acc.login === login) {
+        throw new Error('You already have an account with this credentials.');
+      }
+    })
+
     const account = await this.accountRepository.findById(id);
 
     if (!account) {
@@ -77,9 +85,9 @@ export default class AccountService {
       throw new Error('You are not allowed to update.');
     }
 
-    if (account.name !== name) { account.name = name }
-    if (account.login !== login) { account.login = login }
-    if (account.password !== password) { account.password = password }
+    if (name && account.name !== name) { account.name = name }
+    if (login && account.login !== login) { account.login = login }
+    if (password && account.password !== password) { account.password = password }
 
     await this.accountRepository.update(account);
 

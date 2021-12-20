@@ -1,4 +1,6 @@
-import { Repository, getRepository, DeleteResult } from 'typeorm';
+import {
+  Repository, getRepository, DeleteResult, Like,
+} from 'typeorm';
 import IAccountDTO from '../../../dtos/IAccountDTO';
 import IAccountRepository from '../../../repositories/IAccountRepository';
 import Account from '../entities/Account';
@@ -31,13 +33,13 @@ export default class AccountRepository implements IAccountRepository {
   }
 
   public async findByName(user_id: string, name: string): Promise<Account[]> {
-    const accounts = await this.ormRepoistory.find({ user_id, name });
+    const accounts = await this.ormRepoistory.find({ user_id, name: Like(`%${name}%`) });
 
     return accounts;
   }
 
   public async findByLogin(user_id: string, login: string): Promise<Account[]> {
-    const accounts = await this.ormRepoistory.find({ user_id, login });
+    const accounts = await this.ormRepoistory.find({ user_id, login: Like(`%${login}%`) });
 
     return accounts;
   }
