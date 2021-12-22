@@ -8,5 +8,4 @@ export default interface IUserRepository {
   findById(id: string): Promise<User | null>
   findByLogin(login: string): Promise<User | null>
   update(data: User): Promise<User>
-  delete(id: string): Promise<DeleteResult>
 }

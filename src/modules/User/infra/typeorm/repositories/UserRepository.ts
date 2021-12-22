@@ -1,4 +1,4 @@
-import { getRepository, Repository, DeleteResult } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import IUserRepository from '../../../repositories/IUserRepository';
 import IUserDto from '../../../dtos/IUserDto';
 import User from '../entities/User';
@@ -33,9 +33,5 @@ export default class UserRepository implements IUserRepository {
     const user = await this.ormRepository.save(data);
 
     return user || null;
-  }
-
-  public async delete(id: string): Promise<DeleteResult> {
-    return this.ormRepository.delete({ id })
   }
 }
