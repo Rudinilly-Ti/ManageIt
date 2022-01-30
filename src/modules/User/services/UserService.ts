@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
-import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import authConfig from '../../../config/auth'
-import IUserDto from '../dtos/IUserDto';
 import User from '../infra/typeorm/entities/User';
+import IUserDto from '../dtos/IUserDto';
 import IUserRepository from '../repositories/IUserRepository';
+import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 interface IRequest {
   login: string;
@@ -28,6 +28,8 @@ export default class UserService {
   constructor(
     @inject('UserRepository')
     private userRepository: IUserRepository,
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
   ) { }
 
   public async authenticate({ login, password }: IRequest): Promise<IResponse> {
@@ -36,7 +38,7 @@ export default class UserService {
       throw new Error('Incorrect Login/Password!');
     }
 
-    const passwordMatched = await compare(password, user.password)
+    const passwordMatched = await this.hashProvider.compareHash(password, user.password)
     if (!passwordMatched) {
       throw new Error('Incorrect Login/Password!');
     }
@@ -57,7 +59,7 @@ export default class UserService {
     const checkUserExists = await this.userRepository.findByLogin(login);
     if (checkUserExists) { throw new Error('User already exists') }
 
-    const hashedPassword = await hash(password, 8);
+    const hashedPassword = await this.hashProvider.generateHash(password);
     const user = await this.userRepository.create({
       name,
       login,
@@ -81,9 +83,9 @@ export default class UserService {
     if (name && user.name !== name) { user.name = name; }
     if (login && user.login !== login) { user.login = login; }
     if (password) {
-      const passwordMatched = await compare(password, user.password)
+      const passwordMatched = await this.hashProvider.compareHash(password, user.password)
       if (!passwordMatched) {
-        const hashedPassword = await hash(password, 8);
+        const hashedPassword = await this.hashProvider.generateHash(password);
         user.password = hashedPassword;
       }
     }

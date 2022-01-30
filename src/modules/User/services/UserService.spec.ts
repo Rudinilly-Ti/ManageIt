@@ -1,12 +1,13 @@
 import 'reflect-metadata';
-import { compare } from 'bcryptjs';
 import UserService from './UserService';
 import FakeUserRepository from '../repositories/fakes/FakeUserRepository';
+import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 
 describe('UserService', () => {
   it('should be able to create a new user', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     const user = await userService.createUser({
       name: 'Rudinilly',
@@ -20,7 +21,8 @@ describe('UserService', () => {
 
   it('should not be able to create a new user', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     await userService.createUser({
       name: 'Rudinilly',
@@ -39,7 +41,8 @@ describe('UserService', () => {
 
   it('should authenticate a user', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     await userService.createUser({
       name: 'Rudinilly',
@@ -57,7 +60,8 @@ describe('UserService', () => {
 
   it('should not authenticate a user (incorrect password)', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     await userService.createUser({
       name: 'Rudinilly',
@@ -75,7 +79,8 @@ describe('UserService', () => {
 
   it('should not authenticate a user (incorrect login)', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     await userService.createUser({
       name: 'Rudinilly',
@@ -93,7 +98,8 @@ describe('UserService', () => {
 
   it('should update a user', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     const user = await userService.createUser({
       name: 'Rudinilly',
@@ -110,14 +116,14 @@ describe('UserService', () => {
 
     expect(newUser.name).toBe('Rudinilly Rodrigues');
     expect(newUser.login).toBe('rudinho');
-    expect(await compare('novasenha', newUser.password)).toBe(true);
   });
 
   it('should not update a user (incorrect id)', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
-    const user = await userService.createUser({
+    await userService.createUser({
       name: 'Rudinilly',
       login: 'rudi123',
       password: 'rudi123',
@@ -135,7 +141,8 @@ describe('UserService', () => {
 
   it('should not update a user (login unavailable)', async () => {
     const fakeUserRepository = new FakeUserRepository();
-    const userService = new UserService(fakeUserRepository);
+    const fakeHashProvider = new FakeHashProvider()
+    const userService = new UserService(fakeUserRepository, fakeHashProvider);
 
     const user = await userService.createUser({
       name: 'Rudinilly',
@@ -143,7 +150,7 @@ describe('UserService', () => {
       password: 'rudi',
     });
 
-    const user2 = await userService.createUser({
+    await userService.createUser({
       name: 'Rudinilly',
       login: 'rudi123',
       password: 'rudi123',

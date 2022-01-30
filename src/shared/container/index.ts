@@ -1,4 +1,5 @@
 import { container } from 'tsyringe';
+import '../../modules/User/providers/HashProvider';
 
 import UserRepository from '../../modules/User/infra/typeorm/repositories/UserRepository';
 import IUserRepository from '../../modules/User/repositories/IUserRepository';
